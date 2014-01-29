@@ -176,17 +176,22 @@ namespace Thrift.Transport
                     if( hlp.Client.Client != null)
                         hlp.Client.EndConnect(asyncres);
                 }
-                catch (SocketException)
+                catch (Exception)
                 {
                     // catch that away
                 }
 
                 if (hlp.DoCleanup) 
                 {
-                    asyncres.AsyncWaitHandle.Close();
-                    if (hlp.Client is IDisposable)
-                        ((IDisposable)hlp.Client).Dispose();
-                    hlp.Client = null;
+                    try {
+                        asyncres.AsyncWaitHandle.Close();
+                    } catch (Exception) {}
+                    
+                    try {
+                        if (hlp.Client is IDisposable)
+                            ((IDisposable)hlp.Client).Dispose();
+                        hlp.Client = null;
+                    } catch (Exception) {}
                 }
             }
         }
